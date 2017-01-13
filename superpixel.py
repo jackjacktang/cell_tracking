@@ -10,10 +10,11 @@ import numpy as np
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required = True, help = "Path to the image")
-args = vars(ap.parse_args())
+ap.add_argument("--seg", required = True, help = "The rough number of the segmentations")
+args = ap.parse_args()
  
 # load the image and convert it to a floating point data type
-image = img_as_float(io.imread(args["image"]))
+image = img_as_float(io.imread(args.image))
 print(image.shape)
 
 # print(image)
@@ -21,8 +22,8 @@ print(image.shape)
 # apply SLIC and extract (approximately) the supplied number
 # of segments
 image = np.dstack([image,image,image])
-numSegments = 1000
-segments = slic(image, n_segments = numSegments, sigma = 5)
+numSegments = int(args.seg)
+segments = slic(image, n_segments = numSegments, sigma = 5,compactness=0.1, enforce_connectivity=True)
 print('actual segments size: ', np.unique(segments).size)
 print(type(segments))
 print(segments.shape)
